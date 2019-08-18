@@ -1,0 +1,50 @@
+
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+before_script:
+  - rm -rf .terraform
+  - terraform --version
+  - terraform init
+
+stages:
+  - validate
+  - plan
+  - apply
+
+validate:
+  stage: validate
+  script:
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - export AWS_REGION=us-east-1
+    - terraform plan -out "planfile" -var-file=./variables.tfvars
+  dependencies:
+    - validate
+  artifacts:
+    paths:
+      - planfile
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve=true -var-file=./variables.tfvars
+  after_script:
+    - terraform destroy -auto-approve=true -var-file=./variables.tfvars
+  dependencies:
+    - plan
+  when: manual
+
+persist:
+  stage: apply
+  script:
+    - terraform apply -auto-approve=true -var-file=./variables.tfvars
+  dependencies:
+    - plan
+  when: manual

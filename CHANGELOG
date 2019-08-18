@@ -1,0 +1,10 @@
+# CHANGELOG
+
+## Actualmente trabajando
+-   Refinamiento y testing.
+
+## Pending
+-   S3 Backend.
+
+## Mejoras
+-   VPC Endpoint para S3 y DynamoDB. Podría mejorar la velocidad de subida, escritura y lecutra a S3 y DynamoDB
